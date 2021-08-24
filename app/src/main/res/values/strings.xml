@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">ObukeBudgetApp</string>
+    <string name="shared_preference_file_name">Shared preference file name</string>
+
+    <string-array name="budget_types">
+        <item>Expense</item>
+        <item>Income</item>
+        <item>Loan</item>
+    </string-array>
+
 </resources>
