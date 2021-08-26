@@ -38,6 +38,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         }
         val amountOfMoney = 100
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences(getString(R.string.shared_preference_file_name), Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putFloat("AMOUNT_OF_MONEY", 100f)
+        editor.apply()
         val profileImageString = sharedPreferences.getString("PROFILE_IMAGE_URI", "")
         if(!profileImageString.isNullOrEmpty()) {
             profileImage.setImageBitmap(decodeToBase64(profileImageString))
@@ -54,7 +57,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private fun saveBitmapToSharedPreference(bitmap: Bitmap) {
         val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences(getString(R.string.shared_preference_file_name), Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val byteArray = baos.toByteArray()

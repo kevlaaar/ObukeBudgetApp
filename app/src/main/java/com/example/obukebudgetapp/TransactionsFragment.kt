@@ -4,22 +4,27 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class TestFragmentOne: Fragment(R.layout.fragment_test_one) {
-    lateinit var testTextView: TextView
+class TransactionsFragment: Fragment(R.layout.fragment_transactions) {
+    lateinit var amountOfMoneyTextView: TextView
+    lateinit var addButton: ImageButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        testTextView = view.findViewById(R.id.titleTextView)
+        amountOfMoneyTextView = view.findViewById(R.id.balanceTextView)
+        addButton = view.findViewById(R.id.addTransactionButton)
         val sharedPreferences = requireContext().getSharedPreferences(getString(R.string.shared_preference_file_name), Context.MODE_PRIVATE)
-        val amountOfMoney = sharedPreferences.getInt("AMOUNT_OF_MONEY", -1)
+        val amountOfMoney = sharedPreferences.getFloat("AMOUNT_OF_MONEY", -1f)
 
-        testTextView.text = "$amountOfMoney"
-        testTextView.setOnClickListener{
+        amountOfMoneyTextView.text = "$amountOfMoney"
+        addButton.setOnClickListener{
             val intent = Intent(requireContext(), AddBudgetItemActivity::class.java)
             requireContext().startActivity(intent)
         }
+
+
     }
 }
