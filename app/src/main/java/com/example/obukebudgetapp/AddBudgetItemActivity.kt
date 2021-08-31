@@ -1,6 +1,8 @@
 package com.example.obukebudgetapp
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.text.Editable
@@ -63,7 +65,11 @@ class AddBudgetItemActivity : AppCompatActivity(R.layout.activity_add_budget_ite
                 "Expense" -> {
                     val amountOfMoney = amountOfMoney - transactionAmount
                     sharedPreferences.edit().putFloat("AMOUNT_OF_MONEY", amountOfMoney).apply()
-                    transactionItem = TransactionItem(amountOfMoney, "Expense", System.currentTimeMillis(), "")
+                    transactionItem = TransactionItem(transactionAmount, "expense", System.currentTimeMillis(), "")
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("TRANSACTION_RESULT", transactionItem)
+                    setResult(Activity.RESULT_OK, resultIntent)
+                    finish()
                 }
                 "Loan" -> {
 
@@ -71,7 +77,11 @@ class AddBudgetItemActivity : AppCompatActivity(R.layout.activity_add_budget_ite
                 "Income" -> {
                     val amountOfMoney = amountOfMoney + transactionAmount
                     sharedPreferences.edit().putFloat("AMOUNT_OF_MONEY", amountOfMoney).apply()
-                    transactionItem = TransactionItem(amountOfMoney, "Income", System.currentTimeMillis(), "")
+                    transactionItem = TransactionItem(transactionAmount, "income", System.currentTimeMillis(), "")
+                    val resultIntent = Intent()
+                    resultIntent.putExtra("TRANSACTION_RESULT", transactionItem)
+                    setResult(Activity.RESULT_OK, resultIntent)
+                    finish()
                 }
             }
         }
