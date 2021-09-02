@@ -1,7 +1,9 @@
 package com.example.obukebudgetapp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,6 +19,15 @@ class MainActivity: AppCompatActivity(R.layout.activity_main) {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener(bottomNavListener)
         requestExternalStoragePermissions()
+
+
+        val serviceIntent = Intent(this, TransactionService::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
     }
 
     val bottomNavListener = NavigationBarView.OnItemSelectedListener {
@@ -26,7 +37,7 @@ class MainActivity: AppCompatActivity(R.layout.activity_main) {
                 fragment = TransactionsFragment()
             }
             R.id.testMenuItem2 -> {
-                fragment = TestFragmentTwo()
+                fragment = ColorButtonsFragment()
             }
             R.id.profileMenuOption -> {
                 fragment = ProfileFragment()

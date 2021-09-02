@@ -1,14 +1,20 @@
 package com.example.obukebudgetapp
 
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,18 +42,10 @@ class TransactionsFragment: Fragment(R.layout.fragment_transactions) {
         addButton = view.findViewById(R.id.addTransactionButton)
         transactionsRecycler = view.findViewById(R.id.transactionsRecycler)
         sharedPreferences = requireContext().getSharedPreferences(getString(R.string.shared_preference_file_name), Context.MODE_PRIVATE)
-        val stringJson = sharedPreferences.getString("TRANSACTION_LIST", "")
-
-        stringJson?.let {
-            if(it.isNotEmpty()) {
-                val type: Type = object : TypeToken<List<TransactionItem?>?>() {}.type
-                transactionList = Gson().fromJson(stringJson, type)
-            }
-        }
 
         val amountOfMoney = sharedPreferences.getFloat("AMOUNT_OF_MONEY", -1f)
 
-        transactionsAdapter = TransactionsAdapter(requireContext(), transactionList)
+        transactionsAdapter = TransactionsAdapter(requireContext())
         transactionsRecycler.adapter = transactionsAdapter
         transactionsRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         amountOfMoneyTextView.text = "$amountOfMoney"
@@ -55,6 +53,16 @@ class TransactionsFragment: Fragment(R.layout.fragment_transactions) {
             Log.e("addButtonOnClick", "123123")
             val intent = Intent(requireContext(), AddBudgetItemActivity::class.java)
             startActivityForResult(intent, TRANSACTIONS_REQUEST_CODE)
+        }
+
+        val stringJson = sharedPreferences.getString("TRANSACTION_LIST", "")
+        Log.e("stringJson", "saved value: $stringJson")
+        stringJson?.let {
+            if(it.isNotEmpty()) {
+                val type: Type = object : TypeToken<List<TransactionItem?>?>() {}.type
+                transactionList = Gson().fromJson(stringJson, type)
+                refreshRecyclerView()
+            }
         }
 
 
@@ -70,13 +78,36 @@ class TransactionsFragment: Fragment(R.layout.fragment_transactions) {
                 transactionList.add(transactionResult)
                 transactionList.reverse()
                 refreshRecyclerView()
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    childFragmentManager.beginTransaction().detach(this).commitNow()
-//                    childFragmentManager.beginTransaction().attach(this).commitNow()
-//                } else {
-//                    childFragmentManager.beginTransaction().detach(this).attach(this).commit()
-//                }
+                val message = if(transactionResult.type.toLowerCase()=="expense") "Potrosili ste" else "Zaradili ste"
+                val notificationMessage = "$message ${transactionResult.amount}€"
+                sendNotificationAboutTransaction(transactionResult.type, notificationMessage)
             }
+        }
+    }
+
+    private fun sendNotificationAboutTransaction(notificationTitle: String, notificationMessage: String) {
+        val notificationBuilder = NotificationCompat.Builder(
+            requireContext(), createChannelId()
+        ).setContentTitle(notificationTitle)
+            .setContentText(notificationMessage)
+            .setSmallIcon(R.drawable.icon_profile)
+            .setAutoCancel(true)
+            .setTimeoutAfter(5000)
+
+        NotificationManagerCompat.from(requireContext()).notify(5, notificationBuilder.build())
+    }
+    private fun createChannelId(): String{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "transaction_channel_id",
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = NotificationManagerCompat.from(requireContext())
+            notificationManager.createNotificationChannel(channel)
+            channel.id
+        } else {
+            ""
         }
     }
 

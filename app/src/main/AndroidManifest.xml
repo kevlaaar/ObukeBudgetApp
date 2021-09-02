@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -32,6 +33,8 @@
                 android:resource="@xml/provider_paths"
                 />
         </provider>
+
+        <service android:name=".TransactionService"/>
 
     </application>
 

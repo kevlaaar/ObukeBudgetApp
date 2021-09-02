@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.obukebudgetapp.R
 import com.example.obukebudgetapp.models.TransactionItem
 
-class TransactionsAdapter(private val context:Context, private val transactionList: List<TransactionItem>):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TransactionsAdapter(private val context:Context):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
 
@@ -23,7 +23,7 @@ class TransactionsAdapter(private val context:Context, private val transactionLi
         fun bind(transactionItem: TransactionItem) {
             amountText.text = "${transactionItem.amount}"
             typeText.text = transactionItem.type
-            dateText.text = "${transactionItem.dateEpoch}"
+            dateText.text = transactionItem.epochTimeFormatted
         }
     }
 
@@ -35,7 +35,7 @@ class TransactionsAdapter(private val context:Context, private val transactionLi
         fun bind(transactionItem: TransactionItem) {
             amountText.text = "${transactionItem.amount}"
             typeText.text = transactionItem.type
-            dateText.text = "${transactionItem.dateEpoch}"
+            dateText.text = transactionItem.epochTimeFormatted
         }
     }
 
@@ -47,7 +47,7 @@ class TransactionsAdapter(private val context:Context, private val transactionLi
         fun bind(transactionItem: TransactionItem) {
             amountText.text = "${transactionItem.amount}"
             typeText.text = transactionItem.type
-            dateText.text = "${transactionItem.dateEpoch}"
+            dateText.text = transactionItem.epochTimeFormatted
         }
     }
 
@@ -72,7 +72,7 @@ class TransactionsAdapter(private val context:Context, private val transactionLi
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val transaction = differ.currentList[position]
-        when(transactionList[position].type) {
+        when(differ.currentList[position].type) {
             "expense" -> (holder as ExpenseViewHolder).bind(transaction)
             "loan" -> (holder as LoanViewHolder).bind(transaction)
             "income" -> (holder as IncomeViewHolder).bind(transaction)
@@ -103,7 +103,7 @@ class TransactionsAdapter(private val context:Context, private val transactionLi
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(transactionList[position].type) {
+        return when(differ.currentList[position].type) {
             "expense" -> 0
             "loan" -> 1
             "income" -> 2
